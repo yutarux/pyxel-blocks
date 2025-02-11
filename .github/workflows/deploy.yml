@@ -41,7 +41,7 @@ jobs:
     - name: Convert to HTML
       run: |
         pyxel app2html pyxel-blocks.pyxapp
-        rn pyxel-blocks.html index.html
+        mv pyxel-blocks.html index.html
 
 
     # GitHub Pages へのデプロイ
