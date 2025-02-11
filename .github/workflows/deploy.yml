@@ -1,0 +1,50 @@
+name: Build and Deploy Pyxel Game
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # リポジトリをクローン
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Python 環境をセットアップ
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    # SDL2 ライブラリをインストール
+    - name: Install SDL2 library
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsdl2-dev
+    
+    # 必要なパッケージをインストール
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyxel
+
+    # Pyxelパッケージの生成
+    - name: Package Pyxel App
+      run: |
+        pyxel package . ./app.py
+
+    # HTML形式のファイルを生成
+    - name: Convert to HTML
+      run: |
+        pyxel app2html pyxel-blocks.pyxapp
+
+    # GitHub Pages へのデプロイ
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./  # HTMLファイルをそのままデプロイ
